@@ -12,7 +12,7 @@ function App() {
   const [showAllColumns, setShowAllColumns] = useState(false)
   const [uploadMessage, setUploadMessage] = useState('')
 
-// Parsing functions for CSV, JSON, and Excel files
+
   const parseCSV = (text) => {
     const lines = text.trim().split('\n')
     const headers = lines[0].split(',').map((h) => h.trim())
@@ -46,7 +46,7 @@ function App() {
     const headers = Object.keys(rows[0])
     return { headers, rows }
   }
-// Function to calculate health score and missing values statistics
+
   const calculateStats = (headers, rows) => {
     const totalCells = headers.length * rows.length
     let filledCells = 0
@@ -83,7 +83,7 @@ function App() {
 
     return { health, missingData, allMissing }
   }
-// Main function to handle file uploads and trigger parsing and analysis
+
   const handleFiles = async (files) => {
     const nextFile = files && files[0]
     if (!nextFile) return
@@ -103,7 +103,7 @@ function App() {
         setUploadMessage('Image received. Image analysis is not supported yet.')
         return
       }
-      // parsing logic for CSV, JSON, Excel files
+
       if (fileName.endsWith('.csv')) {
         const text = await nextFile.text()
         parsed = parseCSV(text)
@@ -132,7 +132,7 @@ function App() {
       setUploadMessage('')
     }
   }
-// Drag-and-drop event handlers
+
   const onDrop = (event) => {
     event.preventDefault()
     setIsDragOver(false)
@@ -226,7 +226,7 @@ function App() {
           </div>
           {allMissingColumns.length > 5 && (
             <button className="view-all-btn" onClick={() => setShowAllColumns(!showAllColumns)}>
-              {showAllColumns ? 'Show Top 5 Columns' : 'View All Columns'}
+              {showAllColumns ? 'Show Top 5' : 'View All Columns'}
             </button>
           )}
         </section>
