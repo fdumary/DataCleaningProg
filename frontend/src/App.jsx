@@ -288,7 +288,7 @@ function App() {
                 </div>
               ))
             ) : (
-              <p className="empty-state">Upload a file to see missing values analysis</p>
+              <p className="no-data">No missing values detected or no data uploaded yet.</p>
             )}
           </div>
           {allMissingColumns.length > 5 && (
@@ -299,8 +299,33 @@ function App() {
           <div className="panel-note">
             This analysis identifies which columns have the most missing data, helping you prioritize cleaning efforts.
           </div>
-          
-      
+          {rawData.headers.length > 0 && (
+            <div className="preview-subsection">
+              <h3>Data Preview</h3>
+              <div className="table-container">
+                <table className="preview-table">
+                  <thead>
+                    {previewTable.getHeaderGroups().map((headerGroup) => (
+                      <tr key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
+                        ))}
+                      </tr>
+                    ))}
+                  </thead>
+                  <tbody>
+                    {previewTable.getRowModel().rows.map((row) => (
+                      <tr key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </section>
       </main>
 

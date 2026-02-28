@@ -110,6 +110,10 @@
 
 .missing {
   grid-column: 3 / 4;
+  max-height: 650px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .preview {
@@ -228,6 +232,7 @@
 .bars {
   display: grid;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .bar-row {
@@ -396,6 +401,54 @@
   color: var(--ink-0);
 }
 
+.preview-subsection {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  min-height: 0;
+}
+
+.preview-subsection h3 {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: var(--ink-0);
+}
+
+.table-container {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: auto;
+  max-height: 220px;
+  min-height: 0;
+}
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.preview-table th {
+  position: sticky;
+  top: 0;
+  background: rgba(9, 22, 34, 0.95);
+  color: var(--ink-1);
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.preview-table td {
+  padding: 8px 12px;
+  color: var(--ink-0);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
 
 .guide-row {
   display: flex;
