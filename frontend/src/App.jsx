@@ -13,6 +13,30 @@ function App() {
   const [showAllColumns, setShowAllColumns] = useState(false)
   const [rawData, setRawData] = useState({ headers: [], rows: [] })
   const [uploadMessage, setUploadMessage] = useState('')
+  const [selectedOperations, setSelectedOperations] = useState([])
+
+  const cleaningOperations = [
+    {
+      id: 'fill-missing-mean',
+      label: 'Fill Missing (Mean)',
+      description: 'Replace missing numeric values with column mean',
+    },
+    {
+      id: 'fill-missing-median',
+      label: 'Fill Missing (Median)',
+      description: 'Replace missing numeric values with column median',
+    },
+    {
+      id: 'value-prediction',
+      label: 'Predict Missing Values',
+      description: 'Predict missing values using machine learning models',
+    },
+    {
+      id: 'estimates-values',
+      label: 'Value Estimation',
+      description: 'Estimate missing values based on correlations and patterns in the data',
+    },
+  ]
 
   const previewColumns = useMemo(() => {
     const previewColumnHelper = createColumnHelper()
@@ -215,6 +239,13 @@ function App() {
     setIsDragOver(false)
   }
 
+  const toggleOperation = (operationId) => {
+    setSelectedOperations((prev) =>
+      prev.includes(operationId)
+        ? prev.filter((id) => id !== operationId)
+        : [...prev, operationId]
+    )
+  }
   return (
     <div className="app">
       <header className="topbar">
@@ -327,6 +358,35 @@ function App() {
             </div>
           )}
         </section>
+
+        {rawData.headers.length > 0 && (
+          <section className="panel cleaning-config">
+            <div className="panel-header">
+              <h2>Cleaning Configuration</h2>
+            </div>
+            <p className="config-description">Select cleaning operations to apply:</p>
+            <div className="operations-list">
+              {cleaningOperations.map((operation) => (
+                <label key={operation.id} className="operation-item">
+                  <input
+                    type="checkbox"
+                    checked={selectedOperations.includes(operation.id)}
+                    onChange={() => toggleOperation(operation.id)}
+                  />
+                  <div className="operation-content">
+                    <span className="operation-label">{operation.label}</span>
+                    <span className="operation-description">{operation.description}</span>
+                  </div>
+                </label>
+              ))}
+            </div>
+            {selectedOperations.length > 0 && (
+              <div className="selected-count">
+                {selectedOperations.length} operation{selectedOperations.length !== 1 ? 's' : ''} selected
+              </div>
+            )}
+          </section>
+        )}
       </main>
 
       {}
