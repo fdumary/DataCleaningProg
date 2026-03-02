@@ -3,19 +3,119 @@
   background: radial-gradient(circle at top, #17324b 0%, #0b1d2a 45%, #091622 100%);
   color: var(--ink-0);
   padding: 32px 40px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-bottom: 28px;
+  width: 100%;
 }
 
 .topbar h1 {
   margin: 0;
   font-size: 28px;
   letter-spacing: -0.02em;
+}
+
+.nav-back-btn {
+  background: rgba(56, 172, 255, 0.12);
+  color: var(--accent-blue);
+  border: 1px solid rgba(56, 172, 255, 0.3);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 16px;
+}
+
+.nav-back-btn:hover {
+  background: rgba(56, 172, 255, 0.2);
+  border-color: rgba(56, 172, 255, 0.5);
+}
+
+.nav-next-btn,
+.nav-start-over-btn {
+  background: var(--accent-blue);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 16px;
+}
+
+.nav-next-btn:hover,
+.nav-start-over-btn:hover {
+  background: rgba(56, 172, 255, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(56, 172, 255, 0.3);
+}
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+}
+
+.upload-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.upload-main .panel {
+  width: 100%;
+  max-width: 600px;
+}
+
+.configure-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 700px;
+}
+
+.preview-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 700px;
+}
+
+.export-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.no-data-notice {
+  background: rgba(255, 145, 158, 0.12);
+  color: var(--accent-rose);
+  border: 1px solid rgba(255, 145, 158, 0.3);
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
 }
 
 .eyebrow {
