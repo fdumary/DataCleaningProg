@@ -90,85 +90,40 @@ const navigateFlow = () => {
     setPreviewNotice('')
     setPreviewSummary(null)
 
-    // Attempt to fetch cleaned preview data from the backend API
-    try {
-      const response = await fetch('/api/preview', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          headers: rawData.headers,
-          rows: rawData.rows,
-          operations: selectedOperations,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.statusText}`)
-      }
-
-      const data = await response.json()
-      
-      if (data.error) {
-        setPreviewError(`Backend error: ${data.error}`)
-        toast.error(`Cleaning failed: ${data.error}`)
-        return
-      }
-
-      setPreviewData(data)
-      // if the backend sent a summary, use it directly; otherwise compute local stats
-      if (data.summary) {
-        setPreviewSummary(data.summary)
-        setRawData({ headers: data.headers, rows: data.rows })
-        setHealthScore(data.summary.health)
-        setMissingColumns(data.summary.missingData)
-        setAllMissingColumns(data.summary.allMissing)
-      } else if (data.headers?.length && data.rows?.length) {
-        const cleanedStats = calculateStats(data.headers, data.rows)
-        setRawData({ headers: data.headers, rows: data.rows })
-        setHealthScore(cleanedStats.health)
-        setMissingColumns(cleanedStats.missingData)
-        setAllMissingColumns(cleanedStats.allMissing)
-        setPreviewSummary(cleanedStats)
-      }
-      setPreviewNotice('Preview generated using backend API.')
-      toast.success('Cleaning completed successfully.')
-    } catch {
-      // Silently fall back to local preview for connection errors
+      // Apply cleaning operations locally (frontend-only) and generate preview data
       try {
-        const fallbackRows = applyLocalOperations(rawData.headers, rawData.rows, selectedOperations)
-        const fallbackResult = {
+        const cleanedRows = applyLocalOperations(rawData.headers, rawData.rows, selectedOperations)
+        const cleanedResult = {
           headers: rawData.headers,
-          rows: fallbackRows,
+          rows: cleanedRows,
           operations_applied: selectedOperations,
           original_row_count: rawData.rows.length,
-          preview_row_count: fallbackRows.length,
-          source: 'frontend-fallback',
+          preview_row_count: cleanedRows.length,
+          source: 'frontend',
         }
-        // Update the preview with the locally cleaned data as a fallback
-        setPreviewData(fallbackResult)
-        if (fallbackResult.headers.length && fallbackResult.rows.length) {
-          const cleanedStats = calculateStats(fallbackResult.headers, fallbackResult.rows)
-          setRawData({ headers: fallbackResult.headers, rows: fallbackResult.rows })
+        // Update preview data with cleaned results
+        setPreviewData(cleanedResult)
+        // Update stats based on cleaned data
+        if (cleanedResult.headers.length && cleanedResult.rows.length) {
+          const cleanedStats = calculateStats(cleanedResult.headers, cleanedResult.rows)
+          setRawData({ headers: cleanedResult.headers, rows: cleanedResult.rows })
           setHealthScore(cleanedStats.health)
           setMissingColumns(cleanedStats.missingData)
           setAllMissingColumns(cleanedStats.allMissing)
           setPreviewSummary(cleanedStats)
         }
-        // Set a notice to inform the user that the preview was generated using the local fallback method
-        setPreviewNotice('Showing local preview generated in browser.')
-        toast.success('Cleaning completed successfully, seen in preview.')
-      } catch (fallbackError) {
-        setPreviewError(`Error: ${fallbackError.message}`)
-        toast.error(`Cleaning failed: ${fallbackError.message}`)
-        console.error('Fallback preview failed:', fallbackError)
+      // Show success notification
+        setPreviewNotice('Data cleaned successfully.')
+        toast.success('Cleaning completed successfully.')
+      } catch (error) {
+        console.error('Error applying cleaning operations:', error)
+        setPreviewError(`Cleaning failed: ${error.message}`)
+        toast.error(`Cleaning failed: ${error.message}`)
+      } finally {
+        setIsPreviewLoading(false)
       }
-    } finally {
-      setIsPreviewLoading(false)
     }
-  }
-
+// Toggle between top 5 missing columns and all missing columns in the preview
   const toggleOperation = (operationId) => {
     setSelectedOperations((prev) =>
       prev.includes(operationId) ? prev.filter((id) => id !== operationId) : [...prev, operationId]
