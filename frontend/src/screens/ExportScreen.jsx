@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export function ExportScreen({
@@ -10,6 +11,15 @@ export function ExportScreen({
   handleExportJSON,
 }) {
   const navigate = useNavigate()
+  const [selectedFormat, setSelectedFormat] = useState('csv')
+
+  const handleDownload = () => {
+    if (selectedFormat === 'json') {
+      handleExportJSON()
+      return
+    }
+    handleExportCSV()
+  }
 
   if (!previewData?.rows?.length) {
     return (
@@ -73,12 +83,18 @@ export function ExportScreen({
           </div>
 
           <div className="export-actions" style={{ marginTop: 16 }}>
-            <button className="export-button" onClick={handleExportCSV}>
-              Download CSV
-            </button>
+            <select
+              className="export-button"
+              value={selectedFormat}
+              onChange={(e) => setSelectedFormat(e.target.value)}
+              aria-label="Select export format"
+            >
+              <option value="csv">CSV (.csv)</option>
+              <option value="json">JSON (.json)</option>
+            </select>
 
-            <button className="export-button" onClick={handleExportJSON}>
-              Download JSON
+            <button className="export-button" onClick={handleDownload}>
+              Download
             </button>
 
             {lastExportName && (
