@@ -138,22 +138,10 @@ const navigateFlow = () => {
   const buildExportBaseName = () => {
     const original = selectedFile?.name || 'data'
     const base = original.replace(/\.[^/.]+$/, '')
-    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
-    return `${base}_cleaned_${timestamp}`
+    return `${base}`
   }
 
-  const escapeCsvCell = (value) => {
-    const s = value === null || value === undefined ? '' : String(value)
-
-    if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`
-    return s
-  }
-
-  const toCSV = (headers, rows) => {
-    const headerLine = headers.map(escapeCsvCell).join(',')
-    const lines = rows.map((row) => headers.map((h) => escapeCsvCell(row?.[h])).join(','))
-    return [headerLine, ...lines].join('\n')
-  }
+  const BACKEND_BASE_URL = 'http://127.0.0.1:8000'
 
   const downloadBlob = (blob, filename) => {
     const url = URL.createObjectURL(blob)
@@ -166,7 +154,19 @@ const navigateFlow = () => {
     URL.revokeObjectURL(url)
   }
 
-  const handleExportCSV = () => {
+  const getFilenameFromDisposition = (contentDisposition, fallback) => {
+    if (!contentDisposition) return fallback
+
+    const match = contentDisposition.match(/filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i)
+    const encoded = match?.[1]
+    const plain = match?.[2]
+
+    if (encoded) return decodeURIComponent(encoded)
+    if (plain) return plain
+    return fallback
+  }
+
+  const requestExport = async (format) => {
     const cleaned = getCleanedDataset()
     if (!cleaned) {
       setExportMessage('Generate a cleaned preview first (click “Apply Smart Fixes”).')
@@ -174,31 +174,44 @@ const navigateFlow = () => {
     }
 
     const baseName = buildExportBaseName()
-    const csv = toCSV(cleaned.headers, cleaned.rows)
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
 
-    downloadBlob(blob, `${baseName}.csv`)
-    setLastExportName(`${baseName}.csv`)
-    setExportMessage('Downloaded cleaned CSV successfully.')
-    toast.success('Downloaded cleaned CSV successfully.')
-  }
+    try {
+      setExportMessage('Preparing download...')
+      const response = await fetch(`${BACKEND_BASE_URL}/export`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          headers: cleaned.headers,
+          rows: cleaned.rows,
+          format,
+          base_name: baseName,
+        }),
+      })
 
-  const handleExportJSON = () => {
-    const cleaned = getCleanedDataset()
-    if (!cleaned) {
-      setExportMessage('Generate a cleaned preview first (click “Apply Smart Fixes”).')
-      return
+      if (!response.ok) {
+        throw new Error(`Export failed with status ${response.status}`)
+      }
+
+      const blob = await response.blob()
+      const contentDisposition = response.headers.get('Content-Disposition')
+      const fallbackName = `${baseName}.${format}`
+      const filename = getFilenameFromDisposition(contentDisposition, fallbackName)
+
+      downloadBlob(blob, filename)
+      setLastExportName(filename)
+      setExportMessage(`Downloaded cleaned ${format.toUpperCase()} successfully.`)
+      toast.success(`Downloaded cleaned ${format.toUpperCase()} successfully.`)
+    } catch (error) {
+      setExportMessage(error.message || 'Export failed. Please try again.')
+      toast.error(error.message || 'Export failed. Please try again.')
     }
-
-    const baseName = buildExportBaseName()
-    const json = JSON.stringify(cleaned.rows, null, 2)
-    const blob = new Blob([json], { type: 'application/json;charset=utf-8' })
-
-    downloadBlob(blob, `${baseName}.json`)
-    setLastExportName(`${baseName}.json`)
-    setExportMessage('Downloaded cleaned JSON successfully.')
-    toast.success('Downloaded cleaned JSON successfully.')
   }
+
+  const handleExportCSV = async () => requestExport('csv')
+
+  const handleExportJSON = async () => requestExport('json')
 
   return (
     <div className="app">
