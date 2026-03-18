@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { LoadingSpinner } from '../components/LoadingSpinner'
 
 export function ConfigureScreen({
   rawData,
@@ -99,6 +100,7 @@ export function ConfigureScreen({
               </button>
             </div>
           )}
+          {isPreviewLoading && <LoadingSpinner label="Applying cleaning operations..." fullScreen />}
         </section>
       </main>
     </div>

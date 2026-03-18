@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { LoadingSpinner } from '../components/LoadingSpinner'
 
 export function ExportScreen({
   previewData,
+  isExportLoading,
   exportMessage,
   setExportMessage,
   lastExportName,
@@ -88,13 +90,14 @@ export function ExportScreen({
               value={selectedFormat}
               onChange={(e) => setSelectedFormat(e.target.value)}
               aria-label="Select export format"
+              disabled={isExportLoading}
             >
               <option value="csv">CSV (.csv)</option>
               <option value="json">JSON (.json)</option>
             </select>
 
-            <button className="export-button" onClick={handleDownload}>
-              Download
+            <button className="export-button" onClick={handleDownload} disabled={isExportLoading}>
+              {isExportLoading ? 'Preparing...' : 'Download'}
             </button>
 
             {lastExportName && (
@@ -107,6 +110,7 @@ export function ExportScreen({
             )}
           </div>
 
+          {isExportLoading && <LoadingSpinner label="Preparing file download..." fullScreen />}
           {exportMessage && <div className="preview-loading" style={{ marginTop: 12 }}>{exportMessage}</div>}
 
           <button className="nav-start-over-btn" onClick={() => navigate('/')}>

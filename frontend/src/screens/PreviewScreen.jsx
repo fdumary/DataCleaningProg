@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { LoadingSpinner } from '../components/LoadingSpinner'
 
 export function PreviewScreen({
   previewData,
@@ -100,7 +101,7 @@ export function PreviewScreen({
           <div className="panel-header">
             <h2>Data Preview</h2>
           </div>
-          {isPreviewLoading && <div className="preview-loading">Loading cleaned data...</div>}
+          {isPreviewLoading && <LoadingSpinner label="Loading cleaned data..." fullScreen />}
           {previewError && <div className="preview-error">{previewError}</div>}
           {previewNotice && !isPreviewLoading && <div className="preview-loading">{previewNotice}</div>}
           {previewData?.rows && !isPreviewLoading && (

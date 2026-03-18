@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { calculateStats } from '../components/dataCleaning'
 import { parseCSV, parseJSON, parseExcel } from '../components/parsers'
+import { LoadingSpinner } from '../components/LoadingSpinner'
 
 export function UploadScreen({
   selectedFile,
@@ -28,6 +29,8 @@ export function UploadScreen({
   const handleFiles = async (files) => {
     const nextFile = files && files[0]
     if (!nextFile) return
+    const minSpinnerMs = 550
+    const startTime = Date.now()
 
     setUploadLoading(true)
     setUploadError('')
@@ -69,6 +72,10 @@ export function UploadScreen({
       setPreviewSummary(null)
       setPreviewError('')
       setPreviewNotice('')
+      const elapsed = Date.now() - startTime
+      if (elapsed < minSpinnerMs) {
+        await new Promise((resolve) => setTimeout(resolve, minSpinnerMs - elapsed))
+      }
       setUploadLoading(false)
       // navigate to configure screen after successful upload
       navigate('/configure')
@@ -81,6 +88,10 @@ export function UploadScreen({
       setAllMissingColumns([])
       setShowAllColumns(false)
       setRawData({ headers: [], rows: [] })
+      const elapsed = Date.now() - startTime
+      if (elapsed < minSpinnerMs) {
+        await new Promise((resolve) => setTimeout(resolve, minSpinnerMs - elapsed))
+      }
       setUploadLoading(false)
     }
   }
@@ -107,7 +118,7 @@ export function UploadScreen({
       <div className="topbar">
         <div>
           <p className="eyebrow">Automated Data Cleaner</p>
-          <h1>Automated Data Cleaner</h1>
+          <h1>For Businesses with “Messy” Data</h1>
         </div>
       </div>
 
@@ -141,7 +152,7 @@ export function UploadScreen({
             <span>{selectedFile ? `${Math.round(selectedFile.size / 1024)} KB` : 'Waiting for upload'}</span>
           </div>
           {uploadMessage && <p className="file-note">{uploadMessage}</p>}
-          {uploadLoading && <div className="upload-loading">Processing file...</div>}
+          {uploadLoading && <LoadingSpinner label="Processing file..." fullScreen />}
           {uploadError && <div className="upload-error">{uploadError}</div>}
         </section>
       </main>

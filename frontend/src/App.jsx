@@ -25,7 +25,8 @@ function App() {
   const [previewError, setPreviewError] = useState('')
   const [previewNotice, setPreviewNotice] = useState('')
   const [previewSummary, setPreviewSummary] = useState(null)
-    const [exportMessage, setExportMessage] = useState('')
+  const [exportMessage, setExportMessage] = useState('')
+  const [isExportLoading, setIsExportLoading] = useState(false)
   const [lastExportName, setLastExportName] = useState('')
 
   const cleaningOperations = [
@@ -89,6 +90,8 @@ const navigateFlow = () => {
     setPreviewError('')
     setPreviewNotice('')
     setPreviewSummary(null)
+    const minSpinnerMs = 550
+    const startTime = Date.now()
 
       // Apply cleaning operations locally (frontend-only) and generate preview data
       try {
@@ -120,6 +123,10 @@ const navigateFlow = () => {
         setPreviewError(`Cleaning failed: ${error.message}`)
         toast.error(`Cleaning failed: ${error.message}`)
       } finally {
+        const elapsed = Date.now() - startTime
+        if (elapsed < minSpinnerMs) {
+          await new Promise((resolve) => setTimeout(resolve, minSpinnerMs - elapsed))
+        }
         setIsPreviewLoading(false)
       }
     }
@@ -172,8 +179,11 @@ const navigateFlow = () => {
     }
 
     const baseName = buildExportBaseName()
+    const minSpinnerMs = 550
+    const startTime = Date.now()
 
     try {
+      setIsExportLoading(true)
       setExportMessage('Preparing download...')
       const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
       const filename = `${baseName}_cleaned_${timestamp}.${format}`
@@ -189,13 +199,21 @@ const navigateFlow = () => {
     } catch (error) {
       setExportMessage(error.message || 'Export failed. Please try again.')
       toast.error(error.message || 'Export failed. Please try again.')
+    } finally {
+      const elapsed = Date.now() - startTime
+      if (elapsed < minSpinnerMs) {
+        await new Promise((resolve) => setTimeout(resolve, minSpinnerMs - elapsed))
+      }
+      setIsExportLoading(false)
     }
   }
 
   const handleExportCSV = async () => requestExport('csv')
 
   const handleExportJSON = async () => requestExport('json')
-
+  
+  // Add a loading spinner to every screen that makes an API call so the user knows when processing
+  
   return (
     <div className="app">
       <Toaster position="top-right" toastOptions={{ duration: 3500 }} />
@@ -261,6 +279,7 @@ const navigateFlow = () => {
           element={
             <ExportScreen
               previewData={previewData}
+              isExportLoading={isExportLoading}
               exportMessage={exportMessage}
               setExportMessage={setExportMessage}
               lastExportName={lastExportName}
