@@ -40,6 +40,11 @@
   border-color: rgba(56, 172, 255, 0.5);
 }
 
+.upload-screen .topbar .topbar-action {
+  margin-right: 0;
+  margin-left: 16px;
+}
+
 .nav-next-btn,
 .nav-start-over-btn {
   background: var(--accent-blue);
@@ -81,6 +86,12 @@
 .upload-main .panel {
   width: 100%;
   max-width: 600px;
+}
+
+.upload-screen .topbar {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .configure-main {

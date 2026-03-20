@@ -117,9 +117,12 @@ export function UploadScreen({
     <div className="screen upload-screen">
       <div className="topbar">
         <div>
-          <p className="eyebrow">Automated Data Cleaner</p>
-          <h1>For Businesses with “Messy” Data</h1>
+          <p className="eyebrow">For Businesses with "Messy" Data</p>
+          <h1>Automated Data Cleaner</h1>
         </div>
+        <button className="nav-back-btn topbar-action" onClick={() => navigate('/jobs')}>
+          View Job History
+        </button>
       </div>
 
       <main className="upload-main">

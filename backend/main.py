@@ -49,6 +49,23 @@ class ExportRequest(BaseModel):
     format: str = "csv"
     base_name: str = "data"
 
+
+def _to_json_safe(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {k: _to_json_safe(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_to_json_safe(item) for item in value]
+    if isinstance(value, datetime):
+        return value.isoformat()
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+
+    # Handles ObjectId-like values without taking a hard dependency.
+    if value.__class__.__name__ == "ObjectId":
+        return str(value)
+
+    return str(value)
+
 @app.post("/preview")
 async def preview(request: PreviewRequest):
     # apply any requested operations (currently a stub)
@@ -64,6 +81,14 @@ async def preview(request: PreviewRequest):
         "source": "backend",
         "summary": summary,
     }
+
+
+@app.get("/jobs")
+async def list_jobs(limit: int = 200):
+    safe_limit = max(1, min(limit, 1000))
+    cursor = db["jobs"].find().sort([("created_at", -1), ("_id", -1)]).limit(safe_limit)
+    jobs = await cursor.to_list(length=safe_limit)
+    return [_to_json_safe(job) for job in jobs]
 
 
 @app.post("/export")

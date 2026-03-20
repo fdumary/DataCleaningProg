@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { Toaster, toast } from 'react-hot-toast'
 import { applyLocalOperations, calculateStats } from './components/dataCleaning'
+import { saveBrowserJob } from './api/api'
 import { UploadScreen } from './screens/UploadScreen'
 import { ConfigureScreen } from './screens/ConfigureScreen'
 import { PreviewScreen } from './screens/PreviewScreen'
 import { ExportScreen } from './screens/ExportScreen'
+import { JobHistoryScreen } from './screens/JobHistoryScreen'
 import './App.css'
 
 function App() {
@@ -104,6 +106,18 @@ const navigateFlow = () => {
           preview_row_count: cleanedRows.length,
           source: 'frontend',
         }
+
+        saveBrowserJob({
+          local_id: globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `job_${Date.now()}`,
+          filename: selectedFile?.name || 'uploaded_data',
+          status: 'completed',
+          created_at: new Date().toISOString(),
+          operations_applied: selectedOperations,
+          rows_in: rawData.rows.length,
+          rows_out: cleanedRows.length,
+          source: 'browser',
+        })
+
         // Update preview data with cleaned results
         setPreviewData(cleanedResult)
         // Update stats based on cleaned data
@@ -289,6 +303,7 @@ const navigateFlow = () => {
             />
           }
         />
+        <Route path="/jobs" element={<JobHistoryScreen />} />
       </Routes>
     </div>
   )
