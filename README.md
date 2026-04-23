@@ -13,7 +13,7 @@ The Automated Data Cleaner is a web-based platform that allows businesses to upl
 - Export formats: CSV, JSON, Excel (.xlsx), PDF cleaning report
 
 ## Tech Stack
-- Frontend: React + Tailwind CSS + CSS
+- Frontend: React + Tailwind CSS (with custom CSS)
 - Data Table: TanStack Table
 - Backend: Python + FastAPI
 - Data Processing: Pandas, NumPy, OpenPyXL, rapidfuzz
