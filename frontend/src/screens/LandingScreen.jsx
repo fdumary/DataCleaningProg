@@ -40,13 +40,6 @@ export function LandingScreen() {
             >
               Start Cleaning
             </button>
-            <button
-              type="button"
-              onClick={() => navigate('/upload')}
-              className="rounded-xl border border-slate-700 bg-slate-900/60 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:border-sky-300 hover:text-sky-200"
-            >
-              Upload Data
-            </button>
           </div>
         </div>
 
