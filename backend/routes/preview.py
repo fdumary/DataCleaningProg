@@ -1,21 +1,19 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
+from services.validator import validate_file
 import pandas as pd
 import io
 
 router = APIRouter()
 
-ALLOWED_TYPES = ["text/csv", "application/json", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]
-
 @router.post("/preview")
 async def preview_file(file: UploadFile = File(...)):
     try:
-        if file.content_type not in ALLOWED_TYPES:
-            raise HTTPException(status_code=400, detail="Unsupported file type. Please upload a CSV, Excel, or JSON file.")
-
         contents = await file.read()
 
-        if len(contents) == 0:
-            raise HTTPException(status_code=400, detail="File is empty.")
+        try:
+            validate_file(file.filename, contents)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
 
         if file.filename.endswith('.csv'):
             df = pd.read_csv(io.BytesIO(contents))

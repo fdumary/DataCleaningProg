@@ -1,23 +1,21 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from services.cleaner import run_cleaning_pipeline
+from services.validator import validate_file
 import pandas as pd
 import io
 import json
 
 router = APIRouter()
 
-ALLOWED_TYPES = ["text/csv", "application/json", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]
-
 @router.post("/clean")
 async def clean_file(file: UploadFile = File(...), config: str = Form(...)):
     try:
-        if file.content_type not in ALLOWED_TYPES:
-            raise HTTPException(status_code=400, detail="Unsupported file type. Please upload a CSV, Excel, or JSON file.")
-
         contents = await file.read()
 
-        if len(contents) == 0:
-            raise HTTPException(status_code=400, detail="File is empty.")
+        try:
+            validate_file(file.filename, contents)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
 
         config_dict = json.loads(config)
 

@@ -1,6 +1,7 @@
 import os
 import shutil
 from fastapi import APIRouter, UploadFile, File, HTTPException
+from services.validator import validate_file
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -12,8 +13,10 @@ async def upload_file(file: UploadFile = File(...)):
     try:
         contents = await file.read()
 
-        if len(contents) == 0:
-            raise HTTPException(status_code=400, detail="File is empty.")
+        try:
+            validate_file(file.filename, contents)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
 
         file_path = os.path.join(UPLOAD_FOLDER, file.filename)
         with open(file_path, "wb") as f:

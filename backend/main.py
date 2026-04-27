@@ -7,10 +7,12 @@ from datetime import datetime
 import csv
 import io
 import json
+import os
 from db import db
 from routes.preview import router as preview_router
 from routes.clean import router as clean_router
 from routes.upload import router as upload_router
+from routes.jobs import router as jobs_router
 from services.cleaner import calculate_summary, apply_operations
 
 try:
@@ -22,10 +24,20 @@ app = FastAPI()
 app.include_router(preview_router)
 app.include_router(clean_router)
 app.include_router(upload_router)
+app.include_router(jobs_router)
+
+allowed_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://data-cleaning-prog.vercel.app",
+]
+extra_origin = os.getenv("ALLOWED_ORIGIN")
+if extra_origin:
+    allowed_origins.append(extra_origin)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
