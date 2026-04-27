@@ -64,9 +64,15 @@ DataCleaningProg/
 - Denia Rosiclair - Backend Developer, Data/ML Specialist
 
 ## Screenshots
-<img width="474.25" height="238.5" alt="Screenshot 2026-04-19 223027" src="https://github.com/user-attachments/assets/574aef68-4be0-4ad3-bc9a-621bcd1f32c4" />
-<img width="474.25" height="238.5" alt="image" src="https://github.com/user-attachments/assets/aed64faf-6ea0-4cbc-bc47-61e89be5dffb" />
-<img width="474.25" height="238.5" alt="image" src="https://github.com/user-attachments/assets/e1c1f3d5-0276-4910-b41e-5eecb7e16a66" />
-<img width="474.25" height="238.5" alt="image" src="https://github.com/user-attachments/assets/527e6e53-f8c4-41e7-9050-d02e7e51261f" />
-<img width="474.25" height="238.5" alt="image" src="https://github.com/user-attachments/assets/d9535e97-71f2-4aa1-b410-19de2c6053a9" />
-<img width="474.25" height="238.5" alt="image" src="https://github.com/user-attachments/assets/7c288263-bb9f-496b-9489-077914861326" />
+
+<img width="473.5" height="238.75" alt="Screenshot 2026-04-26 211556" src="https://github.com/user-attachments/assets/37bf3f21-c429-40fc-9249-6c6472f8eb95" />
+
+<img width="473.5" height="238.75" alt="Screenshot 2026-04-26 211650" src="https://github.com/user-attachments/assets/7f62a030-6b81-4f96-8055-89fa1f131d37" />
+
+<img width="473.5" height="238.75" alt="Screenshot 2026-04-26 211737" src="https://github.com/user-attachments/assets/29351667-ad5e-45da-b11f-829a77fa87e8" />
+
+<img width="473.5" height="238.75" alt="Screenshot 2026-04-26 211808" src="https://github.com/user-attachments/assets/511304b6-3e88-4665-8b16-894ac86bd764" />
+
+<img width="473.5" height="238.75" alt="Screenshot 2026-04-26 211826" src="https://github.com/user-attachments/assets/b0c342c2-8ff7-4b9b-b806-8b1045e0b515" />
+
+<img width="473.5" height="238.75" alt="Screenshot 2026-04-26 211902" src="https://github.com/user-attachments/assets/08b7401f-a014-4981-b965-bc4f8629074f" />
